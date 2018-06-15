@@ -1,0 +1,21 @@
+---
+
+- name: Check network device OS
+  assert:
+    that: >
+      ansible_network_os == 'nxos' or
+      ansible_network_os == 'ios'
+    msg: "Network device OS not defined or not supported by this role: {{ ansible_network_os }}"
+
+- name: Configure udld global settings
+  nxos_udld:
+    state: "{{ udld.state | default(omit) }}"
+    aggressive: "{{ udld.aggressive | default(omit) }}"
+    msg_time: "{{ udld.msg_time | default(omit) }}"
+    reset: "{{ udld.reset | default(omit) }}"  
+  when: >
+    ansible_network_os == 'nxos' and  
+    udld is defined
+  tags: 
+    - udld_config
+    - nxos
